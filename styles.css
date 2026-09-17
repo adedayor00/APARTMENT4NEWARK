@@ -215,7 +215,8 @@ textarea.input { min-height: 90px; resize: vertical; }
 .detail-meta { font-family: var(--font-heading); font-weight: 800; font-size: 10px; letter-spacing: 0.11em; color: var(--color-neutral-500); margin: 0; }
 
 .detail-photos { display: grid; grid-template-columns: 2fr 1fr; grid-template-areas: "hero room" "hero kitchen"; gap: 1px; background: var(--color-neutral-800); }
-.photo-slot { position: relative; background: color-mix(in srgb, var(--color-text) 55%, var(--color-neutral-900)); display: flex; align-items: center; justify-content: center; }
+.photo-slot { position: relative; overflow: hidden; background: color-mix(in srgb, var(--color-text) 55%, var(--color-neutral-900)); display: flex; align-items: center; justify-content: center; }
+.photo-slot-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .photo-slot.hero { grid-area: hero; height: 210px; }
 .photo-slot.room { grid-area: room; }
 .photo-slot.kitchen { grid-area: kitchen; }

@@ -6,8 +6,15 @@
 
   const IMG_ICON = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect width="18" height="18" x="3" y="3" rx="0" ry="0"/><circle cx="9" cy="9" r="1.8"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/></svg>';
 
-  function photoSlot(cls, label) {
-    return '<div class="photo-slot grayscale ' + cls + '"><div class="photo-slot-label">' + IMG_ICON + '<span>' + esc(label) + '</span></div></div>';
+  // Generic placeholder photo (no real photo on file yet). Swapped out
+  // automatically for a real photo once one is added in /admin.
+  function placeholderPhoto(label) {
+    return 'https://placehold.co/640x480/2a2a2a/8a8a8a?font=roboto&text=' + encodeURIComponent(label.toUpperCase());
+  }
+
+  function photoSlot(cls, label, url) {
+    const src = url || placeholderPhoto(label);
+    return '<div class="photo-slot grayscale ' + cls + '"><img class="photo-slot-img" src="' + esc(src) + '" alt="' + esc(label) + '" loading="lazy"></div>';
   }
 
   // ───────────────────────── header / footer ─────────────────────────
@@ -136,7 +143,9 @@
       '<p class="detail-meta">' + esc(sel.boardMeta) + ' · ' + esc(sel.sizeLabel) + ' · ' + esc(sel.moveIn) + '</p>' +
     '</div>' +
     '<div class="detail-photos">' +
-      photoSlot('hero', 'Common space') + photoSlot('room', 'Room') + photoSlot('kitchen', 'Kitchen') +
+      photoSlot('hero', 'Common space', (sel.photos || {}).hero) +
+      photoSlot('room', 'Room', (sel.photos || {}).room) +
+      photoSlot('kitchen', 'Kitchen', (sel.photos || {}).kitchen) +
     '</div>' +
     '<div class="stat-strip">' +
       '<div class="stat-cell"><p class="stat-label">RENT</p><p class="stat-value">' + esc(sel.priceLabel) + '</p><p class="stat-caption">' + esc(sel.priceUnit) + '</p></div>' +

@@ -314,12 +314,37 @@
   Object.defineProperty(window.A4N, 'setRenderer', { value: fn => { renderImpl = fn; } });
   function render(opts) { if (renderImpl) renderImpl(opts); }
 
+  // ───────────────────────── live listings (content/listings.json) ─────────────────────────
+  // content/listings.json is the file /admin (Decap CMS) reads and writes.
+  // The LISTINGS array from data.js is shown immediately so the page never
+  // waits on a network round trip; if content/listings.json loads with at
+  // least one listing, it replaces LISTINGS and the board re-renders.
+  function normalizeListing(l) {
+    return Object.assign({
+      unit: '', area: l && l.city ? l.city : '', baths: '1', open: 1,
+      moveIn: 'Available now', deposit: 'Ask', features: [], photos: {}
+    }, l);
+  }
+
+  function loadListingsFromCMS() {
+    fetch('content/listings.json', { cache: 'no-store' })
+      .then(r => (r.ok ? r.json() : null))
+      .then(data => {
+        if (!data || !Array.isArray(data.listings) || !data.listings.length) return;
+        LISTINGS = data.listings.map(normalizeListing);
+        routeFromHash();
+        render();
+      })
+      .catch(() => { /* offline, or listings.json not deployed yet — keep the fallback list */ });
+  }
+
   // ───────────────────────── boot ─────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
     routeFromHash();
     tick();
     setInterval(tick, 30000);
     render();
+    loadListingsFromCMS();
   });
   window.addEventListener('popstate', () => { routeFromHash(); render({ focusMain: true }); });
 
